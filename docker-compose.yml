@@ -3,7 +3,6 @@ version: '3.4'
 services:
   vpn:
     image: dperson/openvpn-client
-    # cap_add, security_opt, and volume required for the image to function
     cap_add:
       - net_admin
     environment:
@@ -21,8 +20,7 @@ services:
     tty: true
     volumes:
       - /dev/net:/dev/net:z
-      - ./vpn_config:/vpn
-    # command: 'server;user;password'
+      - ./vpn_config:/vpn # Put .ovpn fine as 'vpn_config/vpn.conf'
 
   transmission:
     image: linuxserver/transmission
@@ -41,10 +39,6 @@ services:
       - ./transmission_config:/config
       - ./transmission_downloads:/downloads
       # - <path to watch folder>:/watch
-    # ports:
-    #   - 9091:9091
-    #   - 51413:51413
-    #   - 51413:51413/udp
 
   web:
     image: dperson/nginx
@@ -68,7 +62,7 @@ services:
     stdin_open: true
     tty: true
     command: -w "http://transmission:9091;/transmission"
-    # service1 shares the network stack of vpn. The service can by reached using
+    # transmission shares the network stack of vpn. The service can by reached using
     # the name of the service as a hostname.
 
   filebot:
