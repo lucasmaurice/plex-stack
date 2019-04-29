@@ -1,0 +1,84 @@
+version: '3.4'
+
+services:
+  vpn:
+    image: dperson/openvpn-client
+    # cap_add, security_opt, and volume required for the image to function
+    cap_add:
+      - net_admin
+    environment:
+      TZ: 'EST5EDT'
+    networks:
+      - default
+    read_only: true
+    tmpfs:
+      - /run
+      - /tmp
+    restart: unless-stopped
+    security_opt:
+      - label:disable
+    stdin_open: true
+    tty: true
+    volumes:
+      - /dev/net:/dev/net:z
+      - ./vpn_config:/vpn
+    # command: 'server;user;password'
+
+  transmission:
+    image: linuxserver/transmission
+    depends_on:
+      - vpn
+    environment:
+      PUID: '1000'
+      PGID: '1000'
+      TZ: 'EST5EDT'
+      TRANSMISSION_WEB_HOME: '/combustion-release/'
+    network_mode: "service:vpn"
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./transmission_config:/config
+      - ./transmission_downloads:/downloads
+      # - <path to watch folder>:/watch
+    # ports:
+    #   - 9091:9091
+    #   - 51413:51413
+    #   - 51413:51413/udp
+
+  web:
+    image: dperson/nginx
+    depends_on:
+      - transmission
+    environment:
+      TZ: 'EST5EDT'
+    links:
+      - vpn:transmission
+    networks:
+      - default
+    ports:
+      - "9080:80"
+      - "9443:443"
+    read_only: true
+    tmpfs:
+      - /run
+      - /tmp
+      - /var/cache/nginx
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+    command: -w "http://transmission:9091;/transmission"
+    # service1 shares the network stack of vpn. The service can by reached using
+    # the name of the service as a hostname.
+
+  filebot:
+    build: docker-filebot
+    ports:
+      - "5800:5800"
+    volumes:
+      - ./filebot_config:/config
+      - ./transmission_downloads/complete:/storage/origin
+      - ./filebot_storage/out:/storage/destination
+
+networks:
+  default:
