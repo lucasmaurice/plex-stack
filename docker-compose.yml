@@ -70,7 +70,7 @@ services:
     ports:
       - "5800:5800"
     volumes:
-      - ./filebot_config:/config
+      # - ./filebot_config:/config
       - ./transmission_downloads/complete:/storage/origin
       - ./filebot_storage/out:/storage/destination
 
