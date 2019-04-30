@@ -70,7 +70,6 @@ services:
     ports:
       - "5800:5800"
     volumes:
-      # - ./filebot_config:/config
       - ./transmission_downloads/complete:/storage/origin
       - ./filebot_storage/out:/storage/destination
 
@@ -85,7 +84,7 @@ services:
     networks:
       - default
     volumes:
-      - ./sonarr/config:/config
+      - sonarr-config:/config
       - ./filebot_storage/out/Tv Show:/tv
       - ./sonarr/downloads:/downloads
     ports:
@@ -103,7 +102,7 @@ services:
     networks:
       - default
     volumes:
-      - ./radarr/config:/config
+      - radarr-config:/config
       - ./radarr/movies:/movies
       - ./radarr/downloads:/downloads
     ports:
@@ -121,7 +120,7 @@ services:
     networks:
       - default
     volumes:
-      - ./jackett/config:/config
+      - jackett-config:/config
       - ./jackett/downloads:/downloads
     ports:
       - 9117:9117
@@ -129,3 +128,8 @@ services:
 
 networks:
   default:
+
+volumes:
+  sonarr-config:
+  radarr-config:
+  jackett-config:
