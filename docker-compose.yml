@@ -74,5 +74,41 @@ services:
       - ./transmission_downloads/complete:/storage/origin
       - ./filebot_storage/out:/storage/destination
 
+  sonarr:
+    image: linuxserver/sonarr
+    environment:
+      PUID: '1000'
+      PGID: '1000'
+      TZ: 'EST5EDT'
+    links:
+      - vpn:transmission
+    networks:
+      - default
+    volumes:
+      - ./sonarr/config:/config
+      - ./sonarr/tv:/tv
+      - ./sonarr/downloads:/downloads
+    ports:
+      - 8989:8989
+    restart: unless-stopped
+
+  radarr:
+    image: linuxserver/radarr
+    environment:
+      PUID: '1000'
+      PGID: '1000'
+      TZ: 'EST5EDT'
+    links:
+      - vpn:transmission
+    networks:
+      - default
+    volumes:
+      - ./radarr/config:/config
+      - ./radarr/movies:/movies
+      - ./radarr/downloads:/downloads
+    ports:
+      - 7878:7878
+    restart: unless-stopped
+
 networks:
   default:
