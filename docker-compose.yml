@@ -126,6 +126,21 @@ services:
       - 9117:9117
     restart: unless-stopped
 
+  organizr:
+    image: lsiocommunity/organizr
+    environment:
+      PUID: '1000'
+      PGID: '1000'
+      TZ: 'EST5EDT'
+    networks:
+      - default
+    volumes:
+      - organizr-config:/config
+    ports:
+      - 1234:80
+    restart: unless-stopped
+
+
 networks:
   default:
 
@@ -133,3 +148,4 @@ volumes:
   sonarr-config:
   radarr-config:
   jackett-config:
+  organizr-config:
