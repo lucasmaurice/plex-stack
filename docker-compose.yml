@@ -38,7 +38,6 @@ services:
     volumes:
       - ./transmission_config:/config
       - /srv/dev-disk-by-label-SrvFiles/Seedbox:/downloads
-      - /srv/dev-disk-by-label-SrvFiles/Seedbox/watch:/watch
 
   web:
     image: dperson/nginx
